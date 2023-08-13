@@ -54,8 +54,9 @@ class UserManager(BaseUserManager):
         return user
     
 
-class User(models.Model):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('email', unique=True)
+    password = models.CharField('password', default="", max_length=50)
     name = models.CharField('name', max_length=25)
     is_active = models.BooleanField('is active', default=True)
     is_staff = models.BooleanField('is staff', default=False)
@@ -63,7 +64,7 @@ class User(models.Model):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name', 'password']
 
     def get_full_name(self):
         """Retrieve full name of the user"""

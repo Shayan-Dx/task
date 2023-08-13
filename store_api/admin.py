@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category
+from .models import Product, Category, User
 
 
 @admin.register(Category)
@@ -15,3 +15,10 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ["is_enable"]
     search_fields = ["title"]
     filter_horizontal = ['categories']
+
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ["id", "email", "password", "name", "is_active", "is_staff"]
+    list_filter = ["is_active"]
+    search_fields = ["name"]
