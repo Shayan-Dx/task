@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Category(models.Model):
-    parent = models.ForeignKey('self', verbose_name='parent', blank=True, null=True, on_delete=models.CASCADE)
     title = models.CharField('title', max_length=20)
     description = models.TextField('description', blank=True)
     is_enable = models.BooleanField('is enable', default=True)
