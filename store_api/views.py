@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
-from .models import Category, Product
-from .serializers import CategorySerializer, ProductSerializer
+from .models import Category, Product, User
+from .serializers import CategorySerializer, ProductSerializer, UserSerializer
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -65,4 +65,34 @@ class CategoryDetailView(APIView):
     def delete(self, request, primary):
         category = Category.objects.get(pk=primary)
         category.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
+    
+
+class UserListView(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True, context={'request':request})
+        return Response(serializer.data)
+    
+
+class UserDetailView(APIView):
+    def get(self, request, primary):
+        try:
+            user = User.objects.get(pk=primary)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UserSerializer(user, context={'request':request})
+        return Response(serializer.data)
+    
+    def put(self, request, primary):
+        user = User.objects.get(pk=primary)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, primary):
+        user = User.objects.get(pk=primary)
+        user.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
