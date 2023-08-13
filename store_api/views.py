@@ -23,3 +23,37 @@ class ProductDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ProductSerializer(product, context={'request':request})
         return Response(serializer.data)
+    
+    def put(self, request, primary):
+        product = Product.objects.get(pk=primary)
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class CategoryListView(APIView):
+    def get(self, request):
+        category = Category.objects.all()
+        serializer = CategorySerializer(category, many=True, context={'request':request})
+        return Response(serializer.data)
+    
+
+class CategoryDetailView(APIView):
+    def get(self, request, primary):
+        try:
+            category = Category.objects.get(pk=primary)
+        except Category.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CategorySerializer(category, context={'request':request})
+        return Response(serializer.data)
+    
+    def put(self, request, primary):
+        category = Category.objects.get(pk=primary)
+        serializer = CategorySerializer(category, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
