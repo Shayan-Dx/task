@@ -32,6 +32,11 @@ class ProductDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def delete(self, request, primary):
+        product = Product.objects.get(pk=primary)
+        product.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
+    
 
 class CategoryListView(APIView):
     def get(self, request):
@@ -56,4 +61,8 @@ class CategoryDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+    
+    def delete(self, request, primary):
+        category = Category.objects.get(pk=primary)
+        category.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
