@@ -14,7 +14,6 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "is_enable", "created_time"]
     list_filter = ["is_enable"]
     search_fields = ["title"]
-    filter_horizontal = ['categories']
 
 
 @admin.register(User)
