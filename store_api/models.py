@@ -22,7 +22,7 @@ class Product(models.Model):
     title = models.CharField('title', max_length=20)
     description = models.TextField('description', blank=True)
     is_enable = models.BooleanField('is enable', default=True)
-    categories = models.ManyToManyField('Category', verbose_name='categories', blank=True)
+    category = models.ForeignKey('Category', verbose_name='category', on_delete=models.CASCADE, blank=True, null=True)
     created_time = models.DateTimeField('created time', auto_now_add=True)
     updated_time = models.DateTimeField('updated time', auto_now=True)
 
