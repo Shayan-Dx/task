@@ -6,6 +6,9 @@ from .serializers import CategorySerializer, ProductSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ProductListView(APIView):
@@ -13,9 +16,11 @@ class ProductListView(APIView):
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True, context={'request':request})
         return Response(serializer.data)
-    
+
 
 class ProductDetailView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, primary):
         try:
             product = Product.objects.get(pk=primary)
@@ -24,12 +29,29 @@ class ProductDetailView(APIView):
         serializer = ProductSerializer(product, context={'request':request})
         return Response(serializer.data)
     
+    
     def put(self, request, primary):
         product = Product.objects.get(pk=primary)
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, primary):
+        product = Product.objects.get(pk=primary)
+        product.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
+    
+
+class ProductCreate(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -38,9 +60,11 @@ class CategoryListView(APIView):
         category = Category.objects.all()
         serializer = CategorySerializer(category, many=True, context={'request':request})
         return Response(serializer.data)
-    
+
 
 class CategoryDetailView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, primary):
         try:
             category = Category.objects.get(pk=primary)
@@ -56,4 +80,19 @@ class CategoryDetailView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+    
+    def delete(self, request, primary):
+        category = Category.objects.get(pk=primary)
+        category.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
+    
+
+class CategoryCreate(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = CategorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
