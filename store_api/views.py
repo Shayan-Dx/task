@@ -33,7 +33,10 @@ class ProductDetailView(APIView):
     
     
     def put(self, request, primary):
-        product = Product.objects.get(pk=primary)
+        try:
+            product = Product.objects.get(pk=primary)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -41,7 +44,10 @@ class ProductDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, primary):
-        product = Product.objects.get(pk=primary)
+        try:
+            product = Product.objects.get(pk=primary)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         product.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
     
@@ -76,7 +82,10 @@ class CategoryDetailView(APIView):
         return Response(serializer.data)
     
     def put(self, request, primary):
-        category = Category.objects.get(pk=primary)
+        try:
+            category = Category.objects.get(pk=primary)
+        except Category.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = CategorySerializer(category, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -84,7 +93,10 @@ class CategoryDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, primary):
-        category = Category.objects.get(pk=primary)
+        try:
+            category = Category.objects.get(pk=primary)
+        except Category.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         category.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
     
