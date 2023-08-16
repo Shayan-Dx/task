@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from django.core.paginator import Paginator
-from rest_framework.pagination import PageNumberPagination
+from django.conf import settings
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -8,17 +7,23 @@ from .serializers import CategorySerializer, ProductSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+
 class CustomPagination(PageNumberPagination):
-    page_size = 2
-    page_size_query_param = 'page_size'
-    max_page_size = 10
+    page_size = settings.PAGINATION_PAGE_SIZE
+    page_size_query_param = settings.PAGINATION_PAGE_SIZE_QUERY_PARAM
+    max_page_size = settings.PAGINATION_MAX_PAGE_SIZE
+
 
 class ProductListView(APIView):
     pagination_class = CustomPagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['title']
     def get(self, request):
         products = Product.objects.all()
         paginator = CustomPagination()
