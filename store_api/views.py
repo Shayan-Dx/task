@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -11,15 +12,19 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+class CustomPagination(PageNumberPagination):
+    page_size = 2
+    page_size_query_param = 'page_size'
+    max_page_size = 10
 
 class ProductListView(APIView):
+    pagination_class = CustomPagination
     def get(self, request):
         products = Product.objects.all()
-        paginator = Paginator(products, 2)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        serializer = ProductSerializer(page_obj, many=True, context={'request':request})
-        return Response(serializer.data)
+        paginator = CustomPagination()
+        result_page = paginator.paginate_queryset(products, request)
+        serializer = ProductSerializer(result_page, many=True, context={'request':request})
+        return paginator.get_paginated_response(serializer.data)
 
 
 class ProductDetailView(APIView):
@@ -68,11 +73,10 @@ class ProductCreate(APIView):
 class CategoryListView(APIView):
     def get(self, request):
         category = Category.objects.all()
-        paginator = Paginator(category, 2)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        serializer = CategorySerializer(page_obj, many=True, context={'request':request})
-        return Response(serializer.data)
+        paginator = CustomPagination()
+        result_page = paginator.paginate_queryset(category, request)
+        serializer = CategorySerializer(result_page, many=True, context={'request':request})
+        return paginator.get_paginated_response(serializer.data)
 
 
 class CategoryDetailView(APIView):
