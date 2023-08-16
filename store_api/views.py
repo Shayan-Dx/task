@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -22,10 +23,13 @@ class CustomPagination(PageNumberPagination):
 
 class ProductListView(APIView):
     pagination_class = CustomPagination
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['title']
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title']
     def get(self, request):
         products = Product.objects.all()
+        title = request.query_params.get('title', None)
+        if title is not None:
+            products = products.filter(title__icontains=title)
         paginator = CustomPagination()
         result_page = paginator.paginate_queryset(products, request)
         serializer = ProductSerializer(result_page, many=True, context={'request':request})
@@ -76,10 +80,15 @@ class ProductCreate(APIView):
     
 
 class CategoryListView(APIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title']
     def get(self, request):
-        category = Category.objects.all()
+        categories = Category.objects.all()
+        title = request.query_params.get('title', None)
+        if title is not None:
+            categories = categories.filter(title__icontains=title)
         paginator = CustomPagination()
-        result_page = paginator.paginate_queryset(category, request)
+        result_page = paginator.paginate_queryset(categories, request)
         serializer = CategorySerializer(result_page, many=True, context={'request':request})
         return paginator.get_paginated_response(serializer.data)
 
