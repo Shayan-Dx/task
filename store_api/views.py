@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -10,13 +11,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from drf_yasg.utils import swagger_auto_schema
-
 
 class ProductListView(APIView):
     def get(self, request):
         products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True, context={'request':request})
+        paginator = Paginator(products, 2)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        serializer = ProductSerializer(page_obj, many=True, context={'request':request})
         return Response(serializer.data)
 
 
@@ -66,7 +68,10 @@ class ProductCreate(APIView):
 class CategoryListView(APIView):
     def get(self, request):
         category = Category.objects.all()
-        serializer = CategorySerializer(category, many=True, context={'request':request})
+        paginator = Paginator(category, 2)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        serializer = CategorySerializer(page_obj, many=True, context={'request':request})
         return Response(serializer.data)
 
 
