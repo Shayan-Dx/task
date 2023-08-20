@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'cachalot',
+
     'drf_yasg',
 
     'rest_framework',
@@ -94,8 +96,11 @@ DATABASES = {
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -195,3 +200,5 @@ SIMPLE_JWT = {
 PAGINATION_PAGE_SIZE = config('PAGE_SIZE')
 PAGINATION_PAGE_SIZE_QUERY_PARAM = config('PAGE_SIZE_QUERY_PARAM')
 PAGINATION_MAX_PAGE_SIZE = config('MAX_PAGE_SIZE')
+
+CACHALOT_TIMEOUT = config('CACHALOT_TIMEOUT')
