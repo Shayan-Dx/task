@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
@@ -8,7 +10,6 @@ from .serializers import CategorySerializer, ProductSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework import filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 
@@ -25,6 +26,8 @@ class ProductListView(APIView):
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
+
+    @method_decorator(cache_page(60 * 15))
     def get(self, request):
         products = Product.objects.all()
         title = request.query_params.get('title', None)
@@ -80,8 +83,11 @@ class ProductCreate(APIView):
     
 
 class CategoryListView(APIView):
+    pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
+
+    @method_decorator(cache_page(60 * 15))
     def get(self, request):
         categories = Category.objects.all()
         title = request.query_params.get('title', None)
