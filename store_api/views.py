@@ -27,7 +27,7 @@ class ProductListView(APIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
 
-    @method_decorator(cache_page(60 * 15))
+    @method_decorator(cache_page(120))
     def get(self, request):
         products = Product.objects.all()
         title = request.query_params.get('title', None)
@@ -87,7 +87,7 @@ class CategoryListView(APIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
 
-    @method_decorator(cache_page(60 * 15))
+    @method_decorator(cache_page(120))
     def get(self, request):
         categories = Category.objects.all()
         title = request.query_params.get('title', None)
