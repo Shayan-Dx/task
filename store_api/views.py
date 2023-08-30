@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+from .authentication import SafeJWTAuthentication
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -40,7 +41,7 @@ class ProductListView(APIView):
 
 
 class ProductDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, primary):
         try:
@@ -72,7 +73,7 @@ class ProductDetailView(APIView):
     
 
 class ProductCreate(APIView):
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = ProductSerializer(data=request.data)
@@ -100,7 +101,7 @@ class CategoryListView(APIView):
 
 
 class CategoryDetailView(APIView):
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, primary):
         try:
@@ -131,7 +132,7 @@ class CategoryDetailView(APIView):
     
 
 class CategoryCreate(APIView):
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
