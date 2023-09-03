@@ -11,6 +11,7 @@ django-filter==23.2
 django-redis==5.3.0
 django-rest-swagger==2.2.0
 djangorestframework==3.14.0
+djangorestframework-api-key==2.3.0
 djangorestframework-simplejwt==5.2.2
 djangorestframework-swagger==0.2.2
 drf-yasg==1.21.7
@@ -33,6 +34,7 @@ PyJWT==2.8.0
 pymemcache==4.0.0
 python-decouple==3.8
 python-memcached==1.59
+pytimeparse==1.1.8
 pytz==2023.3
 PyYAML==6.0.1
 redis==5.0.0
