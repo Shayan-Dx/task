@@ -6,15 +6,15 @@ from django.views.decorators.cache import cache_page
 
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
+from .authentication import SafeJWTAuthentication
+
+from apikey.throttling import ExceptionalUserRateThrottle
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from .authentication import SafeJWTAuthentication
-
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CustomPagination(PageNumberPagination):
@@ -27,8 +27,10 @@ class ProductListView(APIView):
     pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
+    throttle_classes = [ExceptionalUserRateThrottle]
+    authentication_classes = [SafeJWTAuthentication]
 
-    @method_decorator(cache_page(120))
+    # @method_decorator(cache_page(120))
     def get(self, request):
         products = Product.objects.all()
         title = request.query_params.get('title', None)
@@ -41,6 +43,7 @@ class ProductListView(APIView):
 
 
 class ProductDetailView(APIView):
+
     authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, primary):
@@ -73,6 +76,7 @@ class ProductDetailView(APIView):
     
 
 class ProductCreate(APIView):
+
     authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request):
@@ -84,7 +88,8 @@ class ProductCreate(APIView):
     
 
 class CategoryListView(APIView):
-    pagination_class = CustomPagination
+
+    pagination_class = CustomPagination    
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['title']
 
@@ -101,6 +106,7 @@ class CategoryListView(APIView):
 
 
 class CategoryDetailView(APIView):
+
     authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, primary):
@@ -132,6 +138,7 @@ class CategoryDetailView(APIView):
     
 
 class CategoryCreate(APIView):
+
     authentication_classes = [SafeJWTAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request):
