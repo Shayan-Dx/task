@@ -22,7 +22,7 @@ from django.urls import path, include
 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from store_api.authentication import SafeJWTAuthentication
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -35,7 +35,7 @@ schema_view = get_schema_view(
    ),
    public=False,
    permission_classes=(IsAuthenticated,IsAdminUser),
-   authentication_classes=(JWTAuthentication,),
+   authentication_classes=(SafeJWTAuthentication,),
 
 )
 
